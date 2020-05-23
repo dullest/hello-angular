@@ -1,0 +1,27 @@
+resources:
+- name: my-image-src
+  type: git
+  source:
+    uri: https://github.com/dullest/hello-angular
+
+jobs:
+- name: build
+  plan:
+  - get: my-image-src
+  - task: build
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: vito/oci-build-task
+      inputs:
+      - name: my-image-src
+        path: .
+      outputs:
+      - name: image
+      caches:
+      - path: cache
+      run:
+        path: build
